@@ -1,3 +1,4 @@
+
 <!doctype html>
 <html lang="en">
 <head>
@@ -23,8 +24,8 @@
             <ul class="nav navbar-nav navbar-right">
                 <li><a href="profile.php">Profile</a></li>
                 <li><a href="profile.php">Logout</a></li>
-                <li><a href="profile.php">Login</a></li>
-                <li><a href="profile.php">Register</a></li>
+                <li><a href="login.php">Login</a></li>
+                <li><a href="register.php">Register</a></li>
             </ul>
         </div>
     </nav>
