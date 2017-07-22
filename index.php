@@ -1,6 +1,12 @@
 
 
-<?php include "inc/header.php" ?>
+<?php
+
+    include "lib/User.php";
+    new User();
+    include "inc/header.php"
+
+?>
     <div class="main_content">
         <div class="container">
             <div class="row">
