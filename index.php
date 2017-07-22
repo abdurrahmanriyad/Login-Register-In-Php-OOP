@@ -43,7 +43,7 @@
                                             <td><?php echo $user->username ?></td>
                                             <td><?php echo $user->email ?></td>
                                             <td>
-                                                <a class="btn btn-primary" href="profile.php?id=1">View</a>
+                                                <a class="btn btn-primary" href="profile.php?id=<?php echo $user->id ?>">View</a>
                                             </td>
                                         </tr>
 

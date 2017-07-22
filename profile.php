@@ -1,4 +1,12 @@
 <?php
+    include "lib/User.php";
+    $user = new User();
+    $userData = false;
+    if(isset($_GET['id'])){
+        $userId = (int)$_GET['id'];
+        $userData = $user->getUserById($userId);
+
+    }
     include "inc/header.php";
     Session::checkSession();
 ?>
@@ -12,21 +20,25 @@
                         </div>
                         <div class="panel-body" style="padding: 50px 0">
                             <div class="col-md-6 col-md-offset-3">
-                                <form>
-                                    <div class="form-group">
-                                        <label for="name">Name</label>
-                                        <input type="text" class="form-control" id="name" placeholder="Name" value="Name">
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="name">Username</label>
-                                        <input type="text" class="form-control" id="name" placeholder="Username" value="Username">
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="email">Email address</label>
-                                        <input type="email" class="form-control" id="email" placeholder="Email" value="Email">
-                                    </div>
-                                    <button type="submit" class="btn btn-success">Update</button>
-                                </form>
+                                <?php if($userData): ?>
+                                    <form>
+                                        <div class="form-group">
+                                            <label for="name">Name</label>
+                                            <input type="text" class="form-control" id="name" placeholder="Name" value="<?php echo $userData->name ?>">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="name">Username</label>
+                                            <input type="text" class="form-control" id="name" placeholder="Username" value="<?php echo $userData->username ?>">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="email">Email address</label>
+                                            <input type="email" class="form-control" id="email" placeholder="Email" value="<?php echo $userData->email ?>">
+                                        </div>
+                                        <?php if($userData->id == Session::get('id')){ ?>
+                                            <button type="submit" class="btn btn-success">Update</button>
+                                        <?php } ?>
+                                    </form>
+                                <?php endif; ?>
                             </div>
                         </div>
                     </div>

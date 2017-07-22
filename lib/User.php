@@ -128,4 +128,13 @@ class User
         $result = $query->fetchAll(PDO::FETCH_OBJ);
         return $result;
     }
+
+    public function getUserById($id){
+        $sql = "SELECT * FROM user WHERE id = :id";
+        $query = $this->db->pdo->prepare($sql);
+        $query->bindValue(":id", $id);
+        $query->execute();
+        $result = $query->fetch(PDO::FETCH_OBJ);
+        return $result;
+    }
 }
