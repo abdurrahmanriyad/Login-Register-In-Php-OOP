@@ -193,12 +193,13 @@ class User
             $msg = "<div class='alert alert-danger'><strong>Error!</strong> fields must not be empty</div>";
             return $msg;
         }
-        $password = md5($old_password);
-        $isUser = $this->isUserByPassword($id, $password);
+        $old_password = md5($old_password);
+        $isUser = $this->isUserByPassword($id, $old_password);
         if(!$isUser){
             $msg = "<div class='alert alert-danger'><strong>Error!</strong> sorry old password not matched</div>";
             return $msg;
         }
+        $password = md5($password);
         $sql = "UPDATE user SET password = :password WHERE id = :id";
         $query = $this->db->pdo->prepare($sql);
         $query->bindValue(":password", $password);
