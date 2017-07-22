@@ -46,6 +46,7 @@
                                         </div>
                                         <?php if($userData->id == Session::get('id')){ ?>
                                             <button type="submit" class="btn btn-success" name="update">Update</button>
+                                            <a href="changepassword.php?id=<?php echo $userData->id ?>" class="btn btn-info">Change Password</a>
                                         <?php } ?>
                                     </form>
                                 <?php endif; ?>

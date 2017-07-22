@@ -12,7 +12,7 @@ class User
         $name = $data['name'];
         $username = $data['username'];
         $email = $data['email'];
-        $password = md5($data['password']);
+        $password = $data['password'];
 
         $emailUsed = $this->isEmailUsed($email);
 
@@ -39,7 +39,7 @@ class User
             return $msg;
         }
 
-
+        $password = md5($data['password']);
         $sql = "INSERT INTO user (name, username, email, password) VALUES(:name, :username, :email, :password)";
         $query = $this->db->pdo->prepare($sql);
         $query->bindValue(":name", $name);
@@ -59,7 +59,7 @@ class User
     public function userLogin($data){
 
         $email = $data['email'];
-        $password = md5($data['password']);
+        $password = $data['password'];
 
         $emailUsed = $this->isEmailUsed($email);
 
@@ -77,6 +77,8 @@ class User
             $msg = "<div class='alert alert-danger'><strong>Error!</strong> this email seems have not used yet!</div>";
             return $msg;
         }
+
+        $password = md5($data['password']);
 
         $user = $this->getLoggedinUser($email, $password);
 
@@ -106,7 +108,6 @@ class User
         } else{
             return false;
         }
-
     }
 
 
@@ -180,6 +181,51 @@ class User
         } else{
             $msg = "<div class='alert alert-danger'><strong>Error!</strong> sorry failed to update</div>";
             return $msg;
+        }
+    }
+
+
+    public function updatePassword($id, $data){
+        $old_password = $data['old_password'];
+        $password = $data['password'];
+
+        if($old_password == "" OR $password == ""){
+            $msg = "<div class='alert alert-danger'><strong>Error!</strong> fields must not be empty</div>";
+            return $msg;
+        }
+        $password = md5($old_password);
+        $isUser = $this->isUserByPassword($id, $password);
+        if(!$isUser){
+            $msg = "<div class='alert alert-danger'><strong>Error!</strong> sorry old password not matched</div>";
+            return $msg;
+        }
+        $sql = "UPDATE user SET password = :password WHERE id = :id";
+        $query = $this->db->pdo->prepare($sql);
+        $query->bindValue(":password", $password);
+        $query->bindValue(":id", $id);
+        $result = $query->execute();
+        if($result){
+            $msg = "<div class='alert alert-success'><strong>Congratulations!</strong> Successfully updated!</div>";
+            return $msg;
+        } else{
+            $msg = "<div class='alert alert-danger'><strong>Error!</strong> sorry failed to update</div>";
+            return $msg;
+        }
+
+
+    }
+
+
+    public function isUserByPassword($id, $password){
+        $sql = "SELECT password FROM user WHERE id = :id AND password = :password ";
+        $query = $this->db->pdo->prepare($sql);
+        $query->bindValue(":id", $id);
+        $query->bindValue(":password", $password);
+        $query->execute();
+        if($query->rowCount() > 0){
+            return true;
+        } else{
+            return false;
         }
     }
 }

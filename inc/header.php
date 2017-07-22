@@ -34,11 +34,11 @@
             <ul class="nav navbar-nav navbar-right">
                 <li><a href="index.php">Home</a></li>
                 <?php
-                    $userId = Session::get('id');
+                    $session_userId = Session::get('id');
                     $loggedin = Session::get('login');
                     if($loggedin) :
                 ?>
-                    <li><a href="profile.php?id=<?php echo $userId?>">Profile</a></li>
+                    <li><a href="profile.php?id=<?php echo $session_userId?>">Profile</a></li>
                     <li><a href="?action=logout">Logout</a></li>
                 <?php else: ?>
                     <li><a href="login.php">Login</a></li>
