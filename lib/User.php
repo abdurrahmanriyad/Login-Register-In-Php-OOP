@@ -35,7 +35,7 @@ class User
         }
 
         if($emailUsed){
-            $msg = "<div class='alert alert-danger'><strong>Error!</strong> email already used!</div>";
+            $msg = "<div class='alert alert-danger'><strong>Error!</strong> this email seems have not used yet!</div>";
             return $msg;
         }
 
@@ -56,6 +56,45 @@ class User
         }
     }
 
+    public function userLogin($data){
+
+        $email = $data['email'];
+        $password = md5($data['password']);
+
+        $emailUsed = $this->isEmailUsed($email);
+
+        if($email == "" OR $password == ""){
+            $msg = "<div class='alert alert-danger'><strong>Error!</strong> fields must not be empty</div>";
+            return $msg;
+        }
+
+        if(filter_var($email, FILTER_VALIDATE_EMAIL) === false){
+            $msg = "<div class='alert alert-danger'><strong>Error!</strong> Invalid email!</div>";
+            return $msg;
+        }
+
+        if(!$emailUsed){
+            $msg = "<div class='alert alert-danger'><strong>Error!</strong> this email seems have not used yet!</div>";
+            return $msg;
+        }
+
+        $user = $this->getLoggedinUser($email, $password);
+
+        if($user){
+            Session::init();
+            Session::set('login', true);
+            Session::set('id', $user->id);
+            Session::set('name', $user->name);
+            Session::set('username', $user->username);
+            Session::set('login_msg',"<div class='alert alert-success'><strong>Success!</strong> You are logged in!</div>" );
+            header("Location: index.php");
+        } else{
+            $msg = "<div class='alert alert-danger'><strong>Error!</strong> No data found!</div>";
+            return $msg;
+        }
+    }
+
+
 
     public function isEmailUsed($email){
         $sql = "SELECT email FROM user WHERE email = :email";
@@ -68,5 +107,25 @@ class User
             return false;
         }
 
+    }
+
+
+    public function getLoggedinUser($email, $password){
+        $sql = "SELECT * FROM user WHERE email = :email AND password = :password";
+        $query = $this->db->pdo->prepare($sql);
+        $query->bindValue(":email", $email);
+        $query->bindValue(":password", $password);
+        $query->execute();
+        $result = $query->fetch(PDO::FETCH_OBJ);
+        return $result;
+    }
+
+
+    public function getAllUser(){
+        $sql = "SELECT * FROM user ORDER BY id DESC";
+        $query = $this->db->pdo->prepare($sql);
+        $query->execute();
+        $result = $query->fetchAll(PDO::FETCH_OBJ);
+        return $result;
     }
 }

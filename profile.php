@@ -1,4 +1,7 @@
-<?php include "inc/header.php" ?>
+<?php
+    include "inc/header.php";
+    Session::checkSession();
+?>
     <div class="main_content">
         <div class="container">
             <div class="row">

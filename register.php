@@ -6,8 +6,8 @@
         $userRegistration = $user->userRegistration($_POST);
     }
 
-
     include "inc/header.php";
+    Session::checkLogin();
 ?>
     <div class="main_content">
         <div class="container">
