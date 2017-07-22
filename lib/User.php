@@ -137,4 +137,49 @@ class User
         $result = $query->fetch(PDO::FETCH_OBJ);
         return $result;
     }
+
+    public function updateUser($id, $data){
+        $name = $data['name'];
+        $username = $data['username'];
+        $email = $data['email'];
+
+        if($name == "" OR $username == "" OR $email == ""){
+            $msg = "<div class='alert alert-danger'><strong>Error!</strong> fields must not be empty</div>";
+            return $msg;
+        }
+
+        if(strlen($username) < 3){
+            $msg = "<div class='alert alert-danger'><strong>Error!</strong> Username is too short!</div>";
+            return $msg;
+        }elseif(preg_match('/[^a-z0-9_-]+/', $username)){
+            $msg = "<div class='alert alert-danger'><strong>Error!</strong> Username can only contain alphabets, numbers, underscores and dashes!</div>";
+            return $msg;
+        }
+
+        if(filter_var($email, FILTER_VALIDATE_EMAIL) === false){
+            $msg = "<div class='alert alert-danger'><strong>Error!</strong> Invalid email!</div>";
+            return $msg;
+        }
+
+
+        $sql = "UPDATE user SET name = :name, username = :username, email = :email WHERE id = :id";
+        $query = $this->db->pdo->prepare($sql);
+        $query->bindValue(":name", $name);
+        $query->bindValue(":username", $username);
+        $query->bindValue(":email", $email);
+        $query->bindValue(":id", $id);
+        $result = $query->execute();
+        if($result){
+            $updatedUser = $this->getUserById($id);
+            Session::init();
+            Session::set('login', true);
+            Session::set('name', $updatedUser->name);
+            Session::set('username', $updatedUser->username);
+            $msg = "<div class='alert alert-success'><strong>Congratulations!</strong> Successfully updated!</div>";
+            return $msg;
+        } else{
+            $msg = "<div class='alert alert-danger'><strong>Error!</strong> sorry failed to update</div>";
+            return $msg;
+        }
+    }
 }
