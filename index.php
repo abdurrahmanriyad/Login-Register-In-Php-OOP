@@ -38,7 +38,7 @@
                                     foreach($users as $user):
                                 ?>
                                         <tr>
-                                            <td><?php echo $id++; ?></td>
+                                            <td><?php echo ++$id; ?></td>
                                             <td><?php echo $user->name ?></td>
                                             <td><?php echo $user->username ?></td>
                                             <td><?php echo $user->email ?></td>

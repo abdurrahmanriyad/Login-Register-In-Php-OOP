@@ -1,9 +1,11 @@
 <?php
-    include "lib/User.php";
-    $user = new User();
+    include_once "lib/User.php";
+    include_once "lib/UserAuthentication.php";
+    $userObject = new User();
+    $userAuthentication = new UserAuthentication();
 
     if($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['register'])){
-        $userRegistration = $user->userRegistration($_POST);
+        $userRegistration = $userAuthentication->userRegistration($_POST);
     }
 
     include "inc/header.php";

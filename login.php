@@ -1,9 +1,11 @@
 <?php
-    include "lib/User.php";
+    include_once "lib/User.php";
+    include_once "lib/UserAuthentication.php";
     $user = new User();
+    $userAuthentication = new UserAuthentication();
 
     if($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['login'])){
-        $userLogin = $user->userLogin($_POST);
+        $userLogin = $userAuthentication->userLogin($_POST);
     }
 
     include "inc/header.php";
