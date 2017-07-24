@@ -44,11 +44,4 @@ class Session
         }
     }
 
-    public static function checkLogin(){
-        if(self::get('login')){
-            echo '<script> window.location = "index.php";</script>';
-        }
-    }
-
-
 }

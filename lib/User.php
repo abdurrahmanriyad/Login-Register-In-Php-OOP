@@ -1,7 +1,9 @@
 <?php
-    include_once "Session.php";
-    include "Database.php";
-    include "Validation.php";
+
+include_once "Session.php";
+include "Database.php";
+include "Validation.php";
+
 class User
 {
     private $db;
@@ -11,7 +13,11 @@ class User
         $this->validation = new Validation();
     }
 
-
+    /**
+     * @param $email
+     * @param $password
+     * @return mixed
+     */
     public function getLoggedinUser($email, $password)
     {
         $sql = "SELECT * FROM user WHERE email = :email AND password = :password";
@@ -24,7 +30,9 @@ class User
         return $result;
     }
 
-
+    /**
+     * @return array
+     */
     public function getAllUser()
     {
         $sql = "SELECT * FROM user ORDER BY id DESC";
@@ -35,6 +43,10 @@ class User
         return $result;
     }
 
+    /**
+     * @param $id
+     * @return mixed
+     */
     public function getUserById($id)
     {
         $sql = "SELECT * FROM user WHERE id = :id";
@@ -46,6 +58,11 @@ class User
         return $result;
     }
 
+    /**
+     * @param $id
+     * @param $data
+     * @return string
+     */
     public function updateUser($id, $data)
     {
         $name = $data['name'];
@@ -98,7 +115,11 @@ class User
         }
     }
 
-
+    /**
+     * @param $id
+     * @param $data
+     * @return string
+     */
     public function updateUserPassword($id, $data)
     {
         $old_password = $data['old_password'];
@@ -127,8 +148,10 @@ class User
 
         if ($result) {
             $msg = "<div class='alert alert-success'><strong>Congratulations!</strong> Successfully updated!</div>";
+
             return $msg;
         } else {
+
             $msg = "<div class='alert alert-danger'><strong>Error!</strong> sorry failed to update</div>";
             return $msg;
         }
@@ -136,7 +159,11 @@ class User
 
     }
 
-
+    /**
+     * @param $id
+     * @param $password
+     * @return bool
+     */
     public function isUserByPassword($id, $password)
     {
         $sql = "SELECT password FROM user WHERE id = :id AND password = :password ";
@@ -145,8 +172,10 @@ class User
         $query->bindValue(":password", $password);
         $query->execute();
         if($query->rowCount() > 0){
+
             return true;
         } else{
+
             return false;
         }
     }

@@ -2,14 +2,17 @@
     include_once "Session.php";
     include_once "Database.php";
     include_once "Validation.php";
+    include_once "ExceptionMessage.php";
 
 class UserAuthentication
 {
     private $db;
     private $validation;
+    private $exceptionMessage;
     public function __construct(){
         $this->db = new Database();
         $this->validation = new Validation();
+        $this->exceptionMessage = new ExceptionMessage();
     }
 
     /**
@@ -23,32 +26,30 @@ class UserAuthentication
         $email = $data['email'];
         $password = $data['password'];
 
-        $emailUsed = $this->isEmailUsed($email);
-
         if ($this->validation->areFieldsEmpty([$name, $username, $email, $password])) {
-            $msg = "<div class='alert alert-danger'><strong>Error!</strong> fields must not be empty</div>";
-            return $msg;
+            return $this->exceptionMessage->getAlertMessage("Error! fields can't be empty.");
         }
 
         if ($this->validation->getFieldLength($username) < 3) {
-            $msg = "<div class='alert alert-danger'><strong>Error!</strong> Username is too short!</div>";
-            return $msg;
-        }elseif(preg_match('/[^a-z0-9_-]+/', $username)){
-            $msg = "<div class='alert alert-danger'><strong>Error!</strong> Username can only contain alphabets, numbers, underscores and dashes!</div>";
-            return $msg;
+
+            return $this->exceptionMessage->getAlertMessage("Error! Username is too short!");
+
+        } elseif ($this->validation->preg_match('/[^a-z0-9_-]+/', $username)) {
+
+            return $this->exceptionMessage->getAlertMessage("Error! Username can only contain alphabets, numbers, underscores and dashes!");
+
         }
 
-        if (filter_var($email, FILTER_VALIDATE_EMAIL) === false) {
-            $msg = "<div class='alert alert-danger'><strong>Error!</strong> Invalid email!</div>";
-            return $msg;
+        if (!$this->validation->isEmail($email)) {
+            return $this->exceptionMessage->getAlertMessage("Error! Invalid email!");
         }
 
-        if ($emailUsed) {
-            $msg = "<div class='alert alert-danger'><strong>Error!</strong> this email seems have not used yet!</div>";
-            return $msg;
+        if ($this->isUsedEmail($email)) {
+            return $this->exceptionMessage->getAlertMessage("Error! this email seems have not used yet!");
         }
 
         $password = md5($data['password']);
+
         $sql = "INSERT INTO user (name, username, email, password) VALUES(:name, :username, :email, :password)";
         $query = $this->db->pdo->prepare($sql);
         $query->bindValue(":name", $name);
@@ -58,11 +59,9 @@ class UserAuthentication
         $result = $query->execute();
 
         if ($result) {
-            $msg = "<div class='alert alert-success'><strong>Congratulations!</strong> Successfully registered</div>";
-            return $msg;
+            return $this->exceptionMessage->getSuccessMessage("Congratulations!! Successfully registered!");
         } else {
-            $msg = "<div class='alert alert-danger'><strong>Error!</strong> sorry failed to register</div>";
-            return $msg;
+            return $this->exceptionMessage->getAlertMessage("sorry failed to register");
         }
     }
 
@@ -76,21 +75,17 @@ class UserAuthentication
         $email = $data['email'];
         $password = $data['password'];
 
-        $emailUsed = $this->isEmailUsed($email);
 
         if ($this->validation->areFieldsEmpty([$email, $password])) {
-            $msg = "<div class='alert alert-danger'><strong>Error!</strong> fields must not be empty</div>";
-            return $msg;
+            return $this->exceptionMessage->getAlertMessage("Error!  fields must not be empty!");
         }
 
-        if (filter_var($email, FILTER_VALIDATE_EMAIL) === false) {
-            $msg = "<div class='alert alert-danger'><strong>Error!</strong> Invalid email!</div>";
-            return $msg;
+        if ($this->validation->isEmail($email)) {
+            return $this->exceptionMessage->getAlertMessage("Error!  Invalid email!");
         }
 
-        if (!$emailUsed) {
-            $msg = "<div class='alert alert-danger'><strong>Error!</strong> this email seems have not used yet!</div>";
-            return $msg;
+        if (!$this->isUsedEmail($email)) {
+            return $this->exceptionMessage->getAlertMessage("Error!  this email seems have not used yet!!");
         }
 
         $password = md5($data['password']);
@@ -103,11 +98,10 @@ class UserAuthentication
             Session::set('id', $user->id);
             Session::set('name', $user->name);
             Session::set('username', $user->username);
-            Session::set('login_msg',"<div class='alert alert-success'><strong>Success!</strong> You are logged in!</div>" );
+            Session::set('login_msg',$this->exceptionMessage->getSuccessMessage("Sucess! You are logged in!") );
             header("Location: index.php");
         } else {
-            $msg = "<div class='alert alert-danger'><strong>Error!</strong> No data found!</div>";
-            return $msg;
+            return $this->exceptionMessage->getAlertMessage('Error! No data found!');
         }
 
         return "";
@@ -117,7 +111,7 @@ class UserAuthentication
      * @param $email
      * @return bool
      */
-    public function isEmailUsed($email)
+    public function isUsedEmail($email)
     {
         $sql = "SELECT email FROM user WHERE email = :email";
         $query = $this->db->pdo->prepare($sql);
@@ -129,4 +123,15 @@ class UserAuthentication
             return false;
         }
     }
+
+
+    /**
+     *Check if login is ok
+     */
+    public function checkLogin(){
+        if(Session::get('login')){
+            echo '<script> window.location = "index.php";</script>';
+        }
+    }
+
 }

@@ -7,7 +7,7 @@ if(isset($_GET['id'])){
 }
 
 if($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['updatepass'])){
-    $updatPassword = $user->updatePassword($userId, $_POST);
+    $updatPassword = $user->updateUserPassword($userId, $_POST);
 }
 $userData = $user->getUserById($userId);
 

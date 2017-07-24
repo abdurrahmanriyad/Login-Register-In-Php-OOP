@@ -9,7 +9,7 @@
     }
 
     include "inc/header.php";
-    Session::checkLogin();
+    $userAuthentication->checkLogin();
 ?>
     <div class="main_content">
         <div class="container">
